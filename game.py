@@ -4,12 +4,12 @@ from deck import Deck
 class Game:
 
     def __init__(self, numPlayers=1, numDecks=1):
-        # What do I want to do here?
         self._numPlayers = numPlayers
         #Do I need to give the players names/numbers in order to access them correctly or can I just index to them?
         #How is adding/removing players going to affect this? can I simply add / remove or do I need to keep track of player number
         self._players = [ Player() for i in range(numPlayers) ]
         self._gameDeck = Deck(numDecks)
+        self._dealer = Player()
 
     #region properties
 
@@ -56,8 +56,78 @@ class Game:
 
     #endregion properties
 
+    def runGame(self):
+        # Figure out how to handle dealer
+        self.dealToPlayer(-1, 2)
+        self.printDealerHand(False, False)
+        for i in range(self.numPlayers):
 
-    # Deal function should stay in the deck (I think that makes the most sense)
+            hasStood = False
+            currentPlayer = self.players[i]
+            self.dealToPlayer(i, 2)
+            self.printPlayerHand(i)
+
+            while(not hasStood):
+                if currentPlayer.handTotal > 21:
+                    print("\nBust. Better luck next time")
+                    hasStood = True
+                elif currentPlayer.handTotal == 21:
+                    print("\nCongrats! You've made 21!")
+                    hasStood = True
+                else:
+                    nextMove = input("\nWould you like to 'hit' or 'stand'?: ").lower().strip()
+                    if(nextMove == "hit"):
+                        self.dealToPlayer(i, 1)
+                        self.printPlayerHand(i)
+                    else: 
+                        hasStood = True
+
+        # Dealers turn
+        print("\nDealer's Turn")
+        self.printDealerHand(True, True)
+        if self._dealer.handTotal >= 17:
+            dealerHasStood = True
+        else:
+            dealerHasStood = False
+
+        while(not dealerHasStood):
+            self.dealToPlayer(-1, 1)
+            self.printDealerHand(True, True)
+            
+            if self._dealer.handTotal >= 17:
+                dealerHasStood = True
+
+
+        # Determine winners and end the game
+
+
+        # Grab Dealer's hand total
+        dealersFinalTotal  = self._dealer.handTotal
+        i = 1
+
+        # Compare that value against all of the players' hand totals 
+        for player in self.players:
+            # If Player's handTotal >= 22 - Bust
+            if player.handTotal >= 22:
+                # This is probably a good case to have the players have names instead of just using their index
+                print(f"\nplayer {i} busted!")
+            # else If Player's hand total is greater than Dealer's Hand Total - Player wins
+            elif player.handTotal > dealersFinalTotal:
+                print(f"\nplayer {i} wins!")
+            # Player and dealer had the same total so it was a push
+            elif player.handTotal == dealersFinalTotal:
+                print(f"\nplayer {i} pushes!")
+            # else - player loses
+            else:
+                print(f"\nplayer {i} loses!")
+
+            i += 1
+        
+        
+        
+
+            
+
 
     def calcHandTotal(self, player):
         total = 0
@@ -65,7 +135,7 @@ class Game:
 
         playerHand = player.hand
 
-        for i in range(len(playerHand)): # Do I want _hand here instead? what is best practice?
+        for i in range(len(playerHand)):
             cardRank = playerHand
             ranksInHand.append(cardRank)
             if cardRank in {'J','Q','K'}:
@@ -83,11 +153,15 @@ class Game:
     # Or do I just loop in this method? -- Though theoretically I will only ever deal one card at a time to a player
     def dealToPlayer(self, playerNumber, numCards=1): 
         if len(self.gameDeck.cards) < numCards:
-            return ("Not enough cards left in deck to deal cards")
-        selectedPlayer = self.players[playerNumber - 1]
-        # selectedPlayer.hand.append(self.gameDeck.deal())
-        newCard = self.gameDeck.deal()
-        selectedPlayer.updateHand(newCard)
+            return ("\nNot enough cards left in deck to deal cards")
+        if playerNumber == -1:
+            selectedPlayer = self._dealer
+        else:
+            selectedPlayer = self.players[playerNumber]
+
+        for i in range(numCards):
+            newCard = self.gameDeck.deal()
+            selectedPlayer.updateHand(newCard)
 
 
     #### TODO!!
@@ -100,21 +174,24 @@ class Game:
         ## How I do this will depend on how the collection works for the players
         return 0
 
+    ### TODO!! Should print all players' + dealer's hands
     def printHands(self):
-        
         # for i in range(self.numPlayers):
-
-        
-        
-        
+        # self.printDealerHand()
         return 
-        # How do I want to represent this?? -- Do I want to have all of these on separate lines? Probably
-        # player 1: AH, 4C, 3D Total: 18
-        # player 2: 6S, 3H, 9D
-        # dealer:   AD, KC 
-
-        # Use handTotal() to add total to the end of the list of cards
 
     def printPlayerHand(self, playerNumber):
-        selectedPlayer = self.players[playerNumber - 1]
-        print(f"player{playerNumber}: {selectedPlayer.hand} total: {selectedPlayer.handTotal}")
+        selectedPlayer = self.players[playerNumber]
+        print(f"\nPlayer {playerNumber}: {selectedPlayer.hand} total: {selectedPlayer.handTotal}")
+
+    def printDealerHand(self, revealHoleCard, showTotal):
+        dealerHand = "\nDealer: "
+        if not revealHoleCard:
+            dealerHand += f"[{self._dealer.hand[0]}, ('X', 'X')]"
+        else:
+            dealerHand += f"{self._dealer.hand}"
+        
+        if showTotal:
+            dealerHand += f" total: {self._dealer.handTotal}"
+        print(dealerHand)
+    

@@ -58,7 +58,7 @@ class Player:
         total = 0
         ranksInHand = [] ##Shoot do I turn this into a property instead?
 
-        for i in range(len(self.hand)): # Do I want _hand here instead? what is best practice?
+        for i in range(len(self.hand)):
             cardRank = self.hand[i][0]
             ranksInHand.append(cardRank)
             total += self.convertCardValue(cardRank)
