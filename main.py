@@ -15,7 +15,7 @@ if __name__ == "__main__":
             startNewGame = input("\nwould you like to start a new game? (y/n): ").lower().strip() == 'y'
             
         if startNewGame:
-            # I think that for now, we will always assume it will be new players in the game
+            # I think that for now, we will always assume it will be new players in the game -- Will need to change this for player chips to make sense
             # Lets handle returning players in the future
             
             numberOfPlayers = int(input("\nHow many players would like to play: "))
@@ -23,7 +23,6 @@ if __name__ == "__main__":
             game = Game((numberOfPlayers), numberOfDecks)
             startNewGame = False
 
-        # At this point I think I should call a method in the Game class and handle the logic in there instead
         game.runGame()
         continueGame = input("\nwould you like to continue playing? (y/n): ").lower().strip() == 'y'
 

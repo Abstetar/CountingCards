@@ -1,11 +1,11 @@
 class Player:
 
 
-    def __init__ (self):
+    def __init__ (self, name = ""):
 
         self._hand = []
         self._handTotal = 0
-        self._name = ""
+        self._name = name
         self._unconvertedAces = 0
 
     #region properties
@@ -104,10 +104,7 @@ class Player:
 
 
 
-    # I Think I'm going to want an updateHand and an updateHandTotal function as well
-
     # Refactor everything to use this new Player Class, and move the game logic out of the deck class.
-    # Create a new "Game" class to hold all of the deck and player info the current game? 
     # Should this Game class also have the Deal and handTotal calculation functions? 
 
     

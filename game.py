@@ -7,7 +7,7 @@ class Game:
         self._numPlayers = numPlayers
         #Do I need to give the players names/numbers in order to access them correctly or can I just index to them?
         #How is adding/removing players going to affect this? can I simply add / remove or do I need to keep track of player number
-        self._players = [ Player() for i in range(numPlayers) ]
+        self._players = [ Player(f"Player {i+1}") for i in range(numPlayers) ]
         self._gameDeck = Deck(numDecks)
         self._dealer = Player()
 
@@ -57,7 +57,6 @@ class Game:
     #endregion properties
 
     def runGame(self):
-        # Figure out how to handle dealer
         self.dealToPlayer(-1, 2)
         self.printDealerHand(False, False)
         for i in range(self.numPlayers):
@@ -98,36 +97,26 @@ class Game:
                 dealerHasStood = True
 
 
-        # Determine winners and end the game
-
+        # Determine winners and end the game -- Extract this to a separate method
 
         # Grab Dealer's hand total
         dealersFinalTotal  = self._dealer.handTotal
-        i = 1
 
         # Compare that value against all of the players' hand totals 
         for player in self.players:
             # If Player's handTotal >= 22 - Bust
             if player.handTotal >= 22:
-                # This is probably a good case to have the players have names instead of just using their index
-                print(f"\nplayer {i} busted!")
+                print(f"\n{player.name} busted!")
             # else If Player's hand total is greater than Dealer's Hand Total - Player wins
             elif player.handTotal > dealersFinalTotal:
-                print(f"\nplayer {i} wins!")
+                print(f"\n{player.name} won!")
             # Player and dealer had the same total so it was a push
             elif player.handTotal == dealersFinalTotal:
-                print(f"\nplayer {i} pushes!")
+                print(f"\n{player.name} pushed!")
             # else - player loses
             else:
-                print(f"\nplayer {i} loses!")
-
-            i += 1
+                print(f"\n{player.name} lost!")
         
-        
-        
-
-            
-
 
     def calcHandTotal(self, player):
         total = 0
@@ -166,15 +155,15 @@ class Game:
 
     #### TODO!!
     def addPlayers(self, numPlayers):
-        self._players 
+        return
 
     ### TODO!!
     def removePlayers(self, playerNumber):
         ## Remove that player from the game
         ## How I do this will depend on how the collection works for the players
-        return 0
+        return
 
-    ### TODO!! Should print all players' + dealer's hands
+    ### TODO!! Should print all players' + dealer's hands -- Not sure if I still need this to happen or not
     def printHands(self):
         # for i in range(self.numPlayers):
         # self.printDealerHand()
@@ -182,7 +171,7 @@ class Game:
 
     def printPlayerHand(self, playerNumber):
         selectedPlayer = self.players[playerNumber]
-        print(f"\nPlayer {playerNumber}: {selectedPlayer.hand} total: {selectedPlayer.handTotal}")
+        print(f"\n{selectedPlayer.name}: {selectedPlayer.hand} total: {selectedPlayer.handTotal}")
 
     def printDealerHand(self, revealHoleCard, showTotal):
         dealerHand = "\nDealer: "
